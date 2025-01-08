@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원정보 수정</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        form input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            display: block;
+            margin: 10px auto;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .primary-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .primary-button:hover {
+            background-color: #45a049;
+        }
+
+        .secondary-button {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .secondary-button:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>회원정보 수정</h1>
+        <form id="editForm">
+            <label for="phone">전화번호</label>
+            <input type="text" id="phone" name="phone" maxlength="13" placeholder="010-1234-5678" required>
+
+            <label for="age">나이</label>
+            <input type="number" id="age" name="age" placeholder="나이 입력" required>
+
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" placeholder="새 비밀번호 입력" required>
+
+            <label for="disease">보유 병명</label>
+            <input type="text" id="disease" name="disease" placeholder="보유 병명 (선택 사항)">
+
+            <label for="guardianName">보호자 이름</label>
+            <input type="text" id="guardianName" name="guardianName" placeholder="보호자 이름 입력">
+
+            <label for="guardianPhone">보호자 연락처</label>
+            <input type="text" id="guardianPhone" name="guardianPhone" maxlength="13" placeholder="010-1234-5678">
+
+            <label for="guardianEmail">보호자 이메일</label>
+            <input type="email" id="guardianEmail" name="guardianEmail" placeholder="보호자 이메일 입력">
+
+            <button type="button" id="saveButton" class="primary-button">저장</button>
+        </form>
+        <button onclick="location.href='7.html'" class="secondary-button">완료</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDffe2K4-zNdvbC-vhaVbhP_tSFbrsWK_c",
+            authDomain: "attendance-check-for-elder.firebaseapp.com",
+            databaseURL: "https://attendance-check-for-elder-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "attendance-check-for-elder",
+            storageBucket: "attendance-check-for-elder.appspot.com",
+            messagingSenderId: "165333899971",
+            appId: "1:165333899971:web:9cca76d8d7bb32cfb86076",
+            measurementId: "G-ZLTVRVRJP7"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const userId = localStorage.getItem('loggedInUserId'); 
+
+            if (!userId) {
+                alert('로그인이 필요합니다.');
+                window.location.href = '2-login.html';
+                return;
+            }
+
+            
+            try {
+                const userRef = ref(database, `users/${userId}`);
+                const snapshot = await get(userRef);
+
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+
+                    
+                    document.getElementById('phone').value = userData.phone || '010-';
+                    document.getElementById('age').value = userData.age || '';
+                    document.getElementById('password').value = userData.password || '';
+                    document.getElementById('disease').value = userData.disease || '';
+                    document.getElementById('guardianName').value = userData.guardianName || '';
+                    document.getElementById('guardianPhone').value = userData.guardianPhone || '010-';
+                    document.getElementById('guardianEmail').value = userData.guardianEmail || '';
+                } else {
+                    alert('사용자 정보를 찾을 수 없습니다.');
+                    window.location.href = '2-login.html';
+                }
+            } catch (error) {
+                console.error('사용자 정보를 불러오는 중 오류가 발생했습니다:', error);
+                alert('오류가 발생했습니다. 다시 로그인해 주세요.');
+                window.location.href = '2-login.html';
+            }
+        });
+
+        document.getElementById('saveButton').addEventListener('click', async function () {
+            const phone = document.getElementById('phone').value.trim();
+            const age = document.getElementById('age').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const disease = document.getElementById('disease').value.trim();
+            const guardianName = document.getElementById('guardianName').value.trim();
+            const guardianPhone = document.getElementById('guardianPhone').value.trim();
+            const guardianEmail = document.getElementById('guardianEmail').value.trim();
+
+
+            if (!/^010-\d{4}-\d{4}$/.test(phone)) {
+                alert('전화번호를 올바르게 입력하세요. (예: 010-1234-5678)');
+                return;
+            }
+
+            if (password.length < 8 || !/[!@#$%^&*]/.test(password)) {
+                alert('비밀번호는 최소 8자, 특수 문자를 포함해야 합니다.');
+                return;
+            }
+
+            if (guardianPhone && !/^010-\d{4}-\d{4}$/.test(guardianPhone)) {
+                alert('보호자 연락처를 올바르게 입력하세요. (예: 010-1234-5678)');
+                return;
+            }
+
+            const userId = localStorage.getItem('loggedInUserId');
+
+            if (!userId) {
+                alert('로그인이 필요합니다.');
+                window.location.href = '2-login.html';
+                return;
+            }
+
+
+            try {
+                const userRef = ref(database, `users/${userId}`);
+                await update(userRef, {
+                    phone,
+                    age,
+                    password,
+                    disease,
+                    guardianName,
+                    guardianPhone,
+                    guardianEmail
+                });
+
+                alert('회원정보가 수정되었습니다.');
+            } catch (error) {
+                console.error('Firebase 업데이트 중 오류가 발생했습니다:', error);
+                alert('오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        });
+    </script>
+</body>
+</html>

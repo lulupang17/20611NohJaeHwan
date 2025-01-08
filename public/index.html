@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>독거노인을 위한 서비스 모음ZIP</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        p, li {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        ol {
+            padding-left: 20px;
+        }
+
+        .toggle-box {
+            margin-top: 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            max-height: 0;
+        }
+
+        .toggle-box.open {
+            max-height: 1000px;
+            padding: 10px;
+        }
+
+        .toggle-box-content {
+            font-size: 0.9rem;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        .toggle-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            background-color: #e0e0e0;
+            color: #555;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            transition: background-color 0.2s ease, transform 0.2s;
+        }
+
+        .toggle-button:hover {
+            background-color: #d0d0d0;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>독거노인들을 위한 서비스 모음ZIP</h1>
+        <button class="start-button" onclick="goToNextPage()">시작하기</button>
+
+        
+        <button class="toggle-button" onclick="toggleGuide()">앱 사용방법</button>
+        <div id="toggle-box" class="toggle-box">
+            <div class="toggle-box-content">
+                <h2>독거노인을 위한 응급 상황 대비 웹 서비스 안내</h2>
+                
+                <h3>사용 방법</h3>
+                <h4>회원가입</h4>
+                <p>
+                    회원가입 시 사용자의 이메일과 보호자 이메일을 입력해야 하며, 반드시 실제 사용 중인 이메일을 입력해야 합니다.
+                </p>
+                <ul>
+                    <li><strong>사용자 이메일:</strong> 웹사이트의 각종 알림을 수신합니다.</li>
+                    <li><strong>보호자 이메일:</strong> 응급 상황 발생 시 알림이 전송됩니다.</li>
+                </ul>
+                
+
+                <h3>로그인 후 숙지 사항</h3>
+                
+                <ol>
+                    <li>출석체크 기능</li>
+                    <li>생활 팁 제공 페이지</li>
+                    <li>긴급 전화번호 페이지</li>
+                </ol>
+
+                
+                <h4>출석체크 페이지</h4>
+                <p>
+                    출석체크 페이지에 접속하면 출석체크 버튼이 표시됩니다.
+                </p>
+                <ul>
+                    <li><strong>버튼을 클릭하면 출석 기록이 저장됩니다.</strong></li>
+                    <li><strong>주의:</strong> 3일 이상 출석체크를 하지 않을 경우, 시스템은 응급 상황 가능성을 감지하고 보호자에게 자동으로 긴급 알림을 발송합니다.</li>
+                    <li><strong>기능 테스트:</strong> 알림메시지 테스트하기 버튼을 눌러 알림이 정상적으로 작동하는지 확인할 수 있습니다.</li>
+                </ul>
+
+                
+                <h3>회원정보 수정 페이지</h3>
+                <p>
+                    회원 정보 변경 또는 알림 수신 설정을 수정하려면 회원정보 수정 페이지를 활용하세요.
+                </p>
+                <ul>
+                    <li><strong>회원정보 수정 버튼:</strong> 이름, 이메일 등 회원 정보를 업데이트합니다.</li>
+                    <li><strong>알림 수신 버튼:</strong> 보호자에게 발송되는 긴급 알림 수신 여부를 켜거나 끕니다.</li>
+                    <li><strong>로그아웃 버튼:</strong> 로그인 세션을 종료합니다.</li>
+                </ul>
+
+                
+                <p>
+                    사용 중 문제가 발생하거나 추가적인 문의사항이 있다면, 언제든 아래 이메일로 문의해주세요.
+                </p>
+                <p><strong>elca02170@gmail.com</strong></p>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goToNextPage() {
+            window.location.href = "2-login.html";
+        }
+
+        function toggleGuide() {
+            const toggleBox = document.getElementById('toggle-box');
+            toggleBox.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

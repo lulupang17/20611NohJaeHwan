@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDffe2K4-zNdvbC-vhaVbhP_tSFbrsWK_c",
+            authDomain: "attendance-check-for-elder.firebaseapp.com",
+            databaseURL: "https://attendance-check-for-elder-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "attendance-check-for-elder",
+            storageBucket: "attendance-check-for-elder.firebasestorage.app",
+            messagingSenderId: "165333899971",
+            appId: "1:165333899971:web:9cca76d8d7bb32cfb86076",
+            measurementId: "G-ZLTVRVRJP7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+
+        function applyPhoneFormat(inputElement) {
+            inputElement.addEventListener('input', () => {
+                let value = inputElement.value.replace(/[^0-9]/g, ''); 
+                if (!value.startsWith('010')) value = '010'; 
+
+                if (value.length <= 7) {
+                    inputElement.value = value.slice(0, 3) + '-' + value.slice(3);
+                } else if (value.length <= 11) {
+                    inputElement.value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+                } else {
+                    inputElement.value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const userPhoneInput = document.getElementById('phone');
+            const guardianPhoneInput = document.getElementById('guardianPhone');
+
+            applyPhoneFormat(userPhoneInput);
+            applyPhoneFormat(guardianPhoneInput);
+
+
+            document.getElementById('registerButton').addEventListener('click', async () => {
+                const name = document.getElementById('name').value.trim();
+                const phone = userPhoneInput.value.trim();
+                const age = document.getElementById('age').value.trim();
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const disease = document.getElementById('disease').value.trim();
+                const guardianName = document.getElementById('guardianName').value.trim();
+                const guardianPhone = guardianPhoneInput.value.trim();
+                const guardianEmail = document.getElementById('guardianEmail').value.trim();
+                const receiveAlerts = document.getElementById('receiveAlerts').checked;
+
+                if (!name || !phone || !age || !username || !password || !guardianName || !guardianPhone || !guardianEmail) {
+                    alert("모든 필드를 입력해 주세요.");
+                    return;
+                }
+                if (!username.includes('@')) {
+                    alert("아이디는 유효한 이메일 주소여야 합니다.");
+                    return;
+                }
+                if (password.length < 8) {
+                    alert("비밀번호는 최소 8자 이상이어야 합니다.");
+                    return;
+                }
+
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, username, password);
+                    const user = userCredential.user;
+
+                    const today = new Date().toISOString().split('T')[0];
+
+                    const userId = user.uid;
+                    await set(ref(database, 'users/' + userId), {
+                        name,
+                        phone,
+                        age,
+                        username,
+                        password,
+                        disease: disease || "없음",
+                        guardianName,
+                        guardianPhone,
+                        guardianEmail,
+                        lastAttendanceDate: today,
+                        attendanceHistory: [today],
+                        receiveAlerts 
+                    });
+
+                    alert(`${name}님, 회원가입이 완료되었습니다!`);
+                    window.location.href = '2-login.html';
+                } catch (error) {
+                    console.error("회원가입 오류:", error.message);
+                    alert('회원가입 중 오류가 발생했습니다: ' + error.message);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>회원가입</h1>
+        <form id="signupForm">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" placeholder="이름 입력" required>
+            
+            <label for="phone">전화번호</label>
+            <input type="text" id="phone" name="phone" maxlength="13" required placeholder="010-0000-0000">
+            
+            <label for="age">나이</label>
+            <input type="number" id="age" name="age" placeholder="나이 입력" required>
+            
+            <label for="username">아이디(이메일 입력)</label>
+            <input type="email" id="username" name="username" placeholder="아이디(이메일) 입력" required>
+            
+            <label for="password">비밀번호(8자 이상)</label>
+            <input type="password" id="password" name="password" placeholder="비밀번호 입력" required>
+
+            <label for="disease">보유 병명 (선택)</label>
+            <input type="text" id="disease" name="disease" placeholder="보유 병명을 입력 (없으면 공백)">
+
+            <label for="guardianName">보호자 이름</label>
+            <input type="text" id="guardianName" name="guardianName" placeholder="보호자 이름 입력" required>
+            
+            <label for="guardianPhone">보호자 연락처</label>
+            <input type="text" id="guardianPhone" name="guardianPhone" maxlength="13" required placeholder="010-0000-0000">
+            
+            <label for="guardianEmail">보호자 이메일</label>
+            <input type="email" id="guardianEmail" name="guardianEmail" placeholder="보호자 이메일 입력" required>
+            
+            
+            <label for="receiveAlerts">
+                <input type="checkbox" id="receiveAlerts" name="receiveAlerts" checked>
+                위험 알림 이메일을 수신하겠습니다.
+            </label>
+            
+            <button type="button" id="registerButton">회원가입</button>
+        </form>
+    </div>
+</body>
+</html>

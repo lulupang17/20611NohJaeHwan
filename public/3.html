@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>환영 페이지</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDffe2K4-zNdvbC-vhaVbhP_tSFbrsWK_c",
+            authDomain: "attendance-check-for-elder.firebaseapp.com",
+            databaseURL: "https://attendance-check-for-elder.firebaseapp.com",
+            projectId: "attendance-check-for-elder",
+            storageBucket: "attendance-check-for-elder.appspot.com",
+            messagingSenderId: "165333899971",
+            appId: "1:165333899971:web:9cca76d8d7bb32cfb86076",
+            measurementId: "G-ZLTVRVRJP7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const userId = localStorage.getItem('loggedInUserId'); 
+
+            if (userId) {
+                try {
+                    const userRef = ref(database, `users/${userId}`);
+                    const snapshot = await get(userRef);
+
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        const welcomeMessage = document.getElementById('welcomeMessage');
+                        welcomeMessage.textContent = `${userData.name}님, 반갑습니다!`;
+                    } else {
+                        alert('사용자 정보를 찾을 수 없습니다. 로그인 화면으로 이동합니다.');
+                        window.location.href = '2-login.html';
+                    }
+                } catch (error) {
+                    console.error('사용자 정보를 불러오는 중 오류가 발생했습니다:', error);
+                    alert('오류가 발생했습니다. 다시 로그인해 주세요.');
+                    window.location.href = '2-login.html';
+                }
+            } else {
+                alert('로그인이 필요합니다. 로그인 화면으로 이동합니다.');
+                window.location.href = '2-login.html';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 id="welcomeMessage"></h1>
+        <p>어떤 서비스를 이용하실건가요?</p>
+        <div class="button-group">
+            <button onclick="location.href='4.html'">출석체크</button>
+            <button onclick="location.href='5.html'">여러가지 생활 팁</button>
+            <button onclick="location.href='6.html'">긴급 전화번호 모음</button>
+            <button onclick="location.href='7.html'" class="gray-button">회원정보 수정</button>
+        </div>
+    </div>
+</body>
+</html>
