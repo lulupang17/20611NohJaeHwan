@@ -7,6 +7,7 @@ const cors = require("cors")({ origin: true });
 admin.initializeApp();
 
 
+
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
