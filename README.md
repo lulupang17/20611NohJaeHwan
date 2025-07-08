@@ -1,5 +1,5 @@
-# NohJaeHwanHackathon
-연암공대 AI해커톤 결과물 -독거노인들을 위한 서비스 모음 ZIP
+# 20611 NohJaeHwan
+코드로 말하다 동아리 결과물 -독거노인들을 위한 서비스 모음 ZIP
 
 코드는
 public 폴더의 html파일과 css파일,
